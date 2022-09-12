@@ -5,11 +5,15 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.ismailbelgacem.loginsystem.Data.CatygoryClient;
 import com.ismailbelgacem.loginsystem.Data.LoginClient;
 import com.ismailbelgacem.loginsystem.Data.RegisterClient;
+import com.ismailbelgacem.loginsystem.Model.Catygory;
 import com.ismailbelgacem.loginsystem.Model.Login;
 import com.ismailbelgacem.loginsystem.Model.ResponceLogin;
 import com.ismailbelgacem.loginsystem.Model.User;
+
+import java.util.ArrayList;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -24,6 +28,7 @@ import retrofit2.Response;
 public class ViewMOdelSystem extends ViewModel  {
     public MutableLiveData<ResponceLogin> listMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<ResponceLogin> listMutableLiveData2 = new MutableLiveData<>();
+    public MutableLiveData<ArrayList<Catygory>> catygorylist = new MutableLiveData<>();
     public MutableLiveData<String> logintoken = new MutableLiveData<>();
 
     public void setListMutableLiveData(MutableLiveData<ResponceLogin> listMutableLiveData) {
@@ -109,5 +114,32 @@ public class ViewMOdelSystem extends ViewModel  {
         };
 
        observable.subscribe(observer);
+    }
+    public void getAllCatygry(){
+        Observable<ArrayList<Catygory>> observable= CatygoryClient.getINSTANCE().getAllCatygory()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        Observer<ArrayList<Catygory>> observer= new Observer<ArrayList<Catygory>>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull ArrayList<Catygory> catygories) {
+               catygorylist.postValue(catygories);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.d("TAG", "onError: "+e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+        observable.subscribe(observer);
     }
 }
